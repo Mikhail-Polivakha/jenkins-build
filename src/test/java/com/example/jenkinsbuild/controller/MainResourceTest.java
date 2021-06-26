@@ -5,16 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.match.MockRestRequestMatchers;
-import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -64,5 +59,11 @@ class MainResourceTest {
                 .queryParam("age", 11).toUriString();
 
         Assertions.assertEquals(restTemplate.getForEntity(url, String.class).getBody(), "Alex:11");
+    }
+
+    @Test
+    void create() {
+        String url = UriComponentsBuilder.fromUri(URI.create(String.format("http://localhost:%d", serverPort))).toUriString();
+        Assertions.assertEquals(HttpStatus.CREATED, restTemplate.postForEntity(url, new MainResource.Person("Mikhail", 19), Void.class).getStatusCode());
     }
 }
